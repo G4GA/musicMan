@@ -1,0 +1,29 @@
+#!/bin/bash
+#Hey I am coding, while listening to weval :D
+command=$1
+    
+PROJECT_NAME="$(pwd | grep -o '[^/]*$')"
+
+if [ -n "$command" ];
+then
+    if [ "$command" = "build" ];
+    then
+        make -C build -j$(nproc)
+    fi
+    if [ "$command" = "run" ];
+    then
+        "build/$PROJECT_NAME"
+    fi
+else
+    echo "Set up script and build/run commands"
+    sleep 1
+    echo "Running cmake..."
+    cmake -B build -S .
+    sleep 1
+    if ! test -f "./compile_commands.json";
+    then
+        echo "Creating json file for nvim lsp"
+        cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 .
+    fi
+fi
+
